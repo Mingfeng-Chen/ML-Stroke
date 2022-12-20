@@ -28,7 +28,31 @@ if __name__ == "__main__":
     redundant_cols = ['FMONTH', 'IDATE', 'IMONTH', 'IDAY', 'IYEAR', 'CTELENM1', 'SEQNO', 'CTELNUM1', 'NUMHHOL3', 'NUMPHON3',
                       'CPDEMO1B', 'X_CLLCPWT', 'X_DUALUSE', 'X_DUALCOR', 'X_LLCPWT2', 'X_LLCPWT', 'CELPHON1']
     for c in redundant_cols:
-        del train_features[c]
+        del train_features[c], test_features[c]
     
     print(train_features.dtypes)
+    
     #类型修改为object
+    with open("C:/Users/ChenMingfeng/Documents/GitHub/ML-Stroke/obj_cols.txt") as f:
+        c = f.read().splitlines()
+        train_features[c] = train_features[c].astype("object")
+        test_features[c] = test_features[c].astype("object")
+    
+    #缩放
+    numeric_features = train_features.dtypes[train_features.dtypes == 'float64'].index
+    train_features[numeric_features] = train_features[numeric_features].apply(lambda x: (x - x.mean()) / (x.std()))
+    test_features[numeric_features] = test_features[numeric_features].apply(lambda x: (x - x.mean()) / (x.std()))
+    
+    numeric_features = train_features.dtypes[train_features.dtypes == 'int64'].index
+    train_features[numeric_features] = train_features[numeric_features].apply(lambda x: (x - x.mean()) / (x.std()))
+    test_features[numeric_features] = test_features[numeric_features].apply(lambda x: (x - x.mean()) / (x.std()))
+    
+    #one-hot编码
+    train_features = pd.get_dummies(train_features, dummy_na=True)
+    test_features = pd.get_dummies(test_features, dummy_na=True)
+    print(train_features.shape)
+    print(test_features.shape)
+    
+    #写入csv文件，方便读取
+    train_features.to_csv("train_features.csv")
+    test_features.to_csv("test_features.csv")
