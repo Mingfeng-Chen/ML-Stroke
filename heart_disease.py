@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sun Nov 27 17:10:13 2022
+Created on Tue Dec 20 20:36:25 2022
 
-@author: ChenMingfeng & RenChengwei
+@author: ChenMingfeng
 """
 
 import pandas as pd
-from sklearn.decomposition import PCA
 
 if __name__ == "__main__":
     # 读取csv文件
@@ -22,17 +21,32 @@ if __name__ == "__main__":
     print(train_features.shape)
     print(train_labels.shape)
     print(test_features.shape)
-
+    
     # 数据预处理
-    train_features.fillna(0, inplace=True)
-    test_features.fillna(0, inplace=True)
-    '''
+    train_fetures = train_features.fillna(method='ffill')
+    
     redundant_cols = ['FMONTH', 'IDATE', 'IMONTH', 'IDAY', 'IYEAR', 'CTELENM1', 'SEQNO', 'CTELNUM1', 'NUMHHOL3', 'NUMPHON3',
                       'CPDEMO1B', 'X_CLLCPWT', 'X_DUALUSE', 'X_DUALCOR', 'X_LLCPWT2', 'X_LLCPWT', 'CELPHON1']
     for c in redundant_cols:
         del train_features[c], test_features[c]
-    '''
     
+    print(train_features.dtypes)
+    
+    #选择有心脏病的样本
+    label = []
+    for i in range(train_features.shape[0]):
+        if(train_features.loc[i]['HeartDisease'] == 2):
+            label.append(i)
+    train_features = train_features.drop(labels=label, axis=0)
+    print(train_features.shape)
+    
+    label = []
+    for i in range(test_features.shape[0]):
+        if(test_features.loc[i]['HeartDisease'] == 2):
+            label.append(i)
+    test_features = test_features.drop(labels=label, axis=0)
+    print(test_features.shape)
+
     #类型修改为object
     with open("C:/Users/ChenMingfeng/Documents/GitHub/ML-Stroke/obj_cols.txt") as f:
         c = f.read().splitlines()
@@ -47,23 +61,6 @@ if __name__ == "__main__":
     numeric_features = train_features.dtypes[train_features.dtypes == 'int64'].index
     train_features[numeric_features] = train_features[numeric_features].apply(lambda x: (x - x.mean()) / (x.std()))
     test_features[numeric_features] = test_features[numeric_features].apply(lambda x: (x - x.mean()) / (x.std()))
-        
-    #one-hot编码
-    train_features = pd.get_dummies(train_features, dummy_na=True)
-    test_features = pd.get_dummies(test_features, dummy_na=True)
-    print(train_features.shape)
-    print(test_features.shape)
     
-    pca = PCA(n_components=100)
-    train_features.fillna(0, inplace=True)
-    test_features.fillna(0, inplace=True)
-    train_features = pd.DataFrame(pca.fit_transform(train_features))
-    test_features = pd.DataFrame(pca.fit_transform(test_features))
-    print(train_features.shape)
-    print(test_features.shape)
-    
-    #写入csv文件，方便读取
-    train_features.to_csv("train_features.csv")
-    test_features.to_csv("test_features.csv")
-    
-        
+    train_features.to_csv("heart_train_features.csv")
+    test_features.to_csv("heart_test_features.csv")
