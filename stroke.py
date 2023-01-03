@@ -32,6 +32,12 @@ if __name__ == "__main__":
         c = f.read().splitlines()
         train_features[c] = train_features[c].astype("object")
         test_features[c] = test_features[c].astype("object")
+        
+    #删除时间类型的特征
+    temporal_cols = ['FMONTH','IDATE','IMONTH','IDAY','IYEAR','FLSHTMY3','HIVTSTD3']
+    for c in temporal_cols:
+        del train_features[c]
+        del test_features[c]
     
     #缩放
     numeric_features = train_features.dtypes[train_features.dtypes == 'float64'].index

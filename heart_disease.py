@@ -26,6 +26,12 @@ if __name__ == "__main__":
     print(train_labels.shape)
     print(test_features.shape)
     
+    #删除时间类型的特征
+    temporal_cols = ['FMONTH','IDATE','IMONTH','IDAY','IYEAR','FLSHTMY3','HIVTSTD3']
+    for c in temporal_cols:
+        del train_features[c]
+        del test_features[c]
+        
     # 数据预处理
     train_features.fillna(0, inplace=True)
     test_features.fillna(0, inplace=True)
@@ -39,14 +45,14 @@ if __name__ == "__main__":
     #选择有心脏病的样本
     heart = []
     for i in range(train_features.shape[0]):
-        if(train_features.loc[i]['HeartDisease'] != 1):
+        if(train_features.loc[i]['HeartDisease'] == 2):
             heart.append(i)
     heart_train_features = train_features.drop(labels=heart, axis=0)
-    heart_train_features.reset_index()
-    
+    heart_train_labels = train_labels.drop(labels=heart, axis=0)
+
     heart = []
     for i in range(test_features.shape[0]):
-        if(test_features.loc[i]['HeartDisease'] != 1):
+        if(test_features.loc[i]['HeartDisease'] == 2):
             heart.append(i)
     heart_test_features = test_features.drop(labels=heart, axis=0)
     
@@ -83,4 +89,6 @@ if __name__ == "__main__":
     heart_train_features = pd.get_dummies(heart_train_features)
     heart_test_features = pd.get_dummies(heart_test_features)
     print(heart_train_features.shape)
+    print(heart_train_labels.shape)
     print(heart_test_features.shape)
+    
