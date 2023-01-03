@@ -6,7 +6,6 @@ Created on Tue Dec 20 20:36:25 2022
 """
 
 import pandas as pd
-import numpy as np
 from sklearn.decomposition import PCA
 from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
@@ -20,7 +19,7 @@ if __name__ == "__main__":
     test_feature_path = path + "Prf_feature_test.csv"
 
     # 删去第一列
-    train_features = pd.read_csv(train_feature_path).iloc[:10000, 1:]
+    train_features = pd.read_csv(train_feature_path).iloc[:, 1:]
     train_labels = pd.read_csv(train_label_path).iloc[:, 1:]
     test_features = pd.read_csv(test_feature_path).iloc[:, 1:]
     print(train_features.shape)
@@ -58,11 +57,11 @@ if __name__ == "__main__":
             
     #聚类
     train_kmeans = KMeans(n_clusters=3).fit(heart_train_features)
-    #轮廓系数
+    #轮廓系数0.5823354952923456
     print(silhouette_score(heart_train_features, train_kmeans.labels_, sample_size=heart_train_features.shape[0], metric='euclidean'))
         
     test_kmeans = KMeans(n_clusters=3).fit(heart_test_features)
-    #轮廓系数
+    #轮廓系数0.5857590534936225
     print(silhouette_score(heart_test_features, test_kmeans.labels_, sample_size=heart_test_features.shape[0], metric='euclidean'))
     
     #one-hot编码
@@ -76,6 +75,7 @@ if __name__ == "__main__":
     heart_train_features = pd.DataFrame(pca.fit_transform(heart_train_features))
     heart_test_features = pd.DataFrame(pca.fit_transform(heart_test_features))
     
+    #插入新特征
     heart_train_features.insert(loc=100, column='subtypes', value=train_kmeans.labels_)
     heart_test_features.insert(loc=100, column='subtypes', value=test_kmeans.labels_)
     heart_train_features['subtypes'] = heart_train_features['subtypes'].astype('object')
