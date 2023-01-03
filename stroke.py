@@ -26,12 +26,6 @@ if __name__ == "__main__":
     # 数据预处理
     train_features.fillna(0, inplace=True)
     test_features.fillna(0, inplace=True)
-    '''
-    redundant_cols = ['FMONTH', 'IDATE', 'IMONTH', 'IDAY', 'IYEAR', 'CTELENM1', 'SEQNO', 'CTELNUM1', 'NUMHHOL3', 'NUMPHON3',
-                      'CPDEMO1B', 'X_CLLCPWT', 'X_DUALUSE', 'X_DUALCOR', 'X_LLCPWT2', 'X_LLCPWT', 'CELPHON1']
-    for c in redundant_cols:
-        del train_features[c], test_features[c]
-    '''
     
     #类型修改为object
     with open("C:/Users/ChenMingfeng/Documents/GitHub/ML-Stroke/obj_cols.txt") as f:
@@ -54,6 +48,7 @@ if __name__ == "__main__":
     print(train_features.shape)
     print(test_features.shape)
     
+    #pca降维
     pca = PCA(n_components=100)
     train_features.fillna(0, inplace=True)
     test_features.fillna(0, inplace=True)
