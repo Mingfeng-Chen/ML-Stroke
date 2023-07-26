@@ -1,6 +1,6 @@
 # ML-Stroke
 
-This is the course project of machine learning. Our chosen project is stroke prediction.
+This is the course project of machine learning offered by THU. Our chosen project is stroke prediction.
 
 stroke.py and heart_diease.py is used for data prepocessing.
 
